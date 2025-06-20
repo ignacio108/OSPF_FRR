@@ -117,28 +117,28 @@ Utilice el siguiente comando para ejecutarlo:
 ```bash
 sudo python3 change_key.py --key [Nombre del Key-chain, Key_id en uso, Clave_nueva] --routername [nombres de los routers] --time {segundos}
 ```
-El argumento key:
+### Argumento key:
 
 Define el nombre de la key_chain en uso, el key_id que se está utilizando y la nueva clave que será utilizada junto con el algoritmo hmac-sha-256 para el trailer de OSPF.
 
-El argumento routername
+### Argumento routername
 
 Define el conjunto de routers que se verán afectados por este cambio
 
 -all (Modifica todos los routers del escenario ["rA","rB","rC","rD","rE"])
 
-El argumento time:
+### Argumento time:
 
 Define el numero de segundos que se utilizará de intervalo, el tiempo minimo es 60 segundos, si introducimos un tiempo menor a 60 segundo se utilizará 60 segundos
 
-Ejemplos:
+### Ejemplos:
 
 ```bash
 sudo python3 change_key.py --key 1 1 EVANGELION --routername all --time 10
 sudo python3 change_key.py --key 1 4 EVANGELION3 --routername rA rB --time 100
 ```
 
-Camndos para comprobar que se ha cambiado las keys:
+Comandos para comprobar que se ha cambiado las keys:
 
 ```bash
 show ip ospf interface {interface_name}
