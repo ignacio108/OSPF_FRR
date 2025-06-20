@@ -60,74 +60,79 @@ FRR no permite el uso de IPSEC en OSPF, directamente no es posible configurar el
 
 ## Direcciones IPs:
 Hosts:
+| Host      | Interfaz     | IPv4           | IPv6                                  |
+|-----------|--------------|----------------|----------------------------------------|
+| rA        | netA         | 10.7.1.1/24    | fd80:e42c:3ce3:a66a::1/64              |
+| rA        | netA-B       | 10.8.1.1/24    | fd80:e42c:3ce3:a770::1/64              |
+| rA        | netA-C       | 10.8.1.2/24    | fd80:e42c:3ce3:a770::2/64              |
+| hA        | -            | 10.7.1.10/24   | fd80:e42c:3ce3:a66a::10/64             |
+| rB        | netB         | 10.7.2.1/24    | fd80:e42c:3ce3:a66b::1/64              |
+| rB        | netA-B       | 10.8.1.3/24    | fd80:e42c:3ce3:a770::3/64              |
+| rB        | netB-C       | 10.8.1.4/24    | fd80:e42c:3ce3:a770::4/64              |
+| hB        | -            | 10.7.2.10/24   | fd80:e42c:3ce3:a66b::10/64             |
+| rC        | netC         | 10.7.3.1/24    | fd80:e42c:3ce3:a66c::1/64              |
+| rC        | netA-C       | 10.8.1.5/24    | fd80:e42c:3ce3:a770::5/64              |
+| rC        | netB-C       | 10.8.1.6/24    | fd80:e42c:3ce3:a770::6/64              |
+| hC        | -            | 10.7.3.10/24   | fd80:e42c:3ce3:a66c::10/64             |
+| rD        | netD         | 10.7.4.1/24    | fd80:e42c:3ce3:a66d::1/64              |
+| rD        | netA         | 10.7.1.2/24    | fd80:e42c:3ce3:a66a::2/64              |
+| hD        | -            | 10.7.4.10/24   | fd80:e42c:3ce3:a66d::10/64             |
+| rE        | netE         | 10.7.5.1/24    | fd80:e42c:3ce3:a66e::1/64              |
+| rE        | netA         | 10.7.1.3/24    | fd80:e42c:3ce3:a66a::3/64              |
+| hE        | -            | 10.7.5.10/24   | fd80:e42c:3ce3:a66e::10/64             |
 
-rA-netA:	fd80:e42c:3ce3:a66a::1/64	10.7.1.1/24
-rA-netA-B:	fd80:e42c:3ce3:a770::1/64	10.8.1.1/24
-rA-netA-C:	fd80:e42c:3ce3:a770::2/64	10.8.1.2/24
-hA:			fd80:e42c:3ce3:a66a::10/64	10.7.1.10/24
-rB-netB:	fd80:e42c:3ce3:a66b::1/64	10.7.2.1/24
-rB-netA-B:	fd80:e42c:3ce3:a770::3/64	10.8.1.3/24
-rB-netB-C:	fd80:e42c:3ce3:a770::4/64	10.8.1.4/24
-hb: 		fd80:e42c:3ce3:a66b::10/64	10.7.2.10/24
-rC-netC:	fd80:e42c:3ce3:a66c::1/64	10.7.3.1/24
-rC-netA-C:	fd80:e42c:3ce3:a770::5/64	10.8.1.5/24
-rC-netB-C:	fd80:e42c:3ce3:a770::6/64	10.8.1.6/24
-hc: 		fd80:e42c:3ce3:a66c::10/64	10.7.3.10/24
-rD-netD:	fd80:e42c:3ce3:a66d::1/64	10.7.4.1/24
-rD-netA:	fd80:e42c:3ce3:a66a::2/64	10.7.1.2/24
-hd:			fd80:e42c:3ce3:a66d::10/64	10.7.4.10/24
-rE-netE:	fd80:e42c:3ce3:a66e::1/64	10.7.5.1/24
-rE-netA:	fd80:e42c:3ce3:a66a::3/64	10.7.1.3/24
-he:			fd80:e42c:3ce3:a66e::10/64	10.7.5.10/24
 
-## Change_key 
+## Cambios de claves del OSPF trailer 
 
 El script change.key permite automatizar el cambio de claves en el proceso de OSPF.
 
-    Su objetivo principar el modificar la key_id del keychain actual para añadirle un tiempo maximo de uso y crear una nueva key dentro de la misma key_chain para sustituir a la anterior.
+Su objetivo principar el modificar la key_id del keychain actual para añadirle un tiempo maximo de uso y crear una nueva key dentro de la misma key_chain para sustituir a la anterior.
 
 
-    La lógica del cambio de claves es la siguiente
+La lógica del cambio de claves es la siguiente
 
-    Key en uso(key_id):
-                        desde           hasta
-    accept lifetime     date-time       date+time
-    send   lifetime     date-time       date+time
+### Key en uso (`key_id`)
 
-    Key nueva(key_id+1):
-                        desde           hasta
-    accept lifetime     date            infinite
-    send   lifetime     date            infinite
+| Tipo             | Desde       | Hasta       |
+|------------------|-------------|-------------|
+| accept lifetime  | date-time   | date-time   |
+| send lifetime    | date-time   | date-time   |
 
-    ```bash
-    sudo python3 change_key.py --key [Nombre del Key-chain, Key_id en uso, Clave_nueva] --routername [nombres de los routers] --time {segundos}
-    ```
+### Key nueva (`key_id + 1`)
 
+| Tipo             | Desde       | Hasta     |
+|------------------|-------------|-----------|
+| accept lifetime  | date        | infinite  |
+| send lifetime    | date        | infinite  |
+
+```bash
+sudo python3 change_key.py --key [Nombre del Key-chain, Key_id en uso, Clave_nueva] --routername [nombres de los routers] --time {segundos}
+```
+## Cambios de claves del OSPF trailer 
 El argumento key:
 
-    Define el nombre de la key_chain en uso, el key_id que se está utilizando y la nueva clave que será utilizada junto con el algoritmo hmac-sha-256 para el trailer de OSPF.
+Define el nombre de la key_chain en uso, el key_id que se está utilizando y la nueva clave que será utilizada junto con el algoritmo hmac-sha-256 para el trailer de OSPF.
 
 El argumento routername
 
-    Define el conjunto de routers que se verán afectados por este cambio
+Define el conjunto de routers que se verán afectados por este cambio
 
-    -all (Modifica todos los routers del escenario ["rA","rB","rC","rD","rE"])
+-all (Modifica todos los routers del escenario ["rA","rB","rC","rD","rE"])
 
-El argumento time
+El argumento time:
 
-    Define el numero de segundos que se utilizará de intervalo, el tiempo minimo es 60 segundos, si introducimos un tiempo menor a 60 segundo se utilizará 60 segundos
+Define el numero de segundos que se utilizará de intervalo, el tiempo minimo es 60 segundos, si introducimos un tiempo menor a 60 segundo se utilizará 60 segundos
 
 Ejemplos:
 
-    ```bash
-    sudo python3 change_key.py --key 1 1 EVANGELION --routername all --time 10
-    sudo python3 change_key.py --key 1 4 EVANGELION3 --routername rA rB --time 100
-    ```
+```bash
+sudo python3 change_key.py --key 1 1 EVANGELION --routername all --time 10
+sudo python3 change_key.py --key 1 4 EVANGELION3 --routername rA rB --time 100
+```
 
 Camndos para comprobar que se ha cambiado las keys:
 
-    ```bash
-    show ip ospf interface {interface_name}
-
-    show running-config
-    ```
+```bash
+show ip ospf interface {interface_name}
+show running-config
+```
