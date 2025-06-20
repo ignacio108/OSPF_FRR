@@ -1,6 +1,9 @@
 # OSPF_FRR
 Virtual Lab using VNX( Virtual Networks over linuX)  to test the security of OSPFv2 and OSPFv3
 
+![Topología del escenario](/Topologia.png)
+
+
 ## Preparación del escenario
 
 
@@ -105,10 +108,15 @@ La lógica del cambio de claves es la siguiente
 | accept lifetime  | date        | infinite  |
 | send lifetime    | date        | infinite  |
 
+
+## Script de python para automatizar el cambio de claves 
+
+La lógica anterior se implementa en un script de python en el directorio /change_key
+Utilice el siguiente comando para ejecutarlo:
+
 ```bash
 sudo python3 change_key.py --key [Nombre del Key-chain, Key_id en uso, Clave_nueva] --routername [nombres de los routers] --time {segundos}
 ```
-## Cambios de claves del OSPF trailer 
 El argumento key:
 
 Define el nombre de la key_chain en uso, el key_id que se está utilizando y la nueva clave que será utilizada junto con el algoritmo hmac-sha-256 para el trailer de OSPF.
