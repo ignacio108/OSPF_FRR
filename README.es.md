@@ -4,10 +4,10 @@ Virtual Lab using VNX( Virtual Networks over linuX)  to test the security of OSP
 ![Topología del escenario](img/Topologia.png)
 
 
-## Scenario preparation
+## Preparación del escenario
 
 
-It is necessary to download the file system image used by the scenario instances. From the directory `OSPF_FRR/filesystems`, execute:
+Es necesario descargar la imagen del sistema de ficheros utilizada por las instancias del escenario. Desde el directorio `OSPF_FRR/filesystems`, ejecutar:
 
 
 ```bash
@@ -16,16 +16,17 @@ sudo ln -s vnx_rootfs_lxc_ubuntu64-22.04-v025-vnxlab rootfs_lxc
 ```
 
 
-# Test scenario OSPF-FRR 
+# Escenario de pruebas OSPF-FRR 
 
-OSPF with two areas, an area 0 (backbone) with 3 routers interconnected with point to point links.
-And another area (area 1) with routers connected with point to multipoint links.
 
-Both have ipv4 and ipv6 configured.
+OSPF con dos areas, un area 0 (backbone) con 3 routers interconectados con enlaces punto a punto.
+Y otra area (area 1) con routers conectados con enlaces punto a multipunto.
 
-## Two Scenarios:
+Ambos tienen configurados ipv4 e ipv6.
 
-Scenario without security in the areas of OSPF:
+## DOS ESCENARIOS:
+
+Escenario sin seguridad en las areas de OSPF:
 
 
 ```bash
@@ -36,14 +37,14 @@ sudo vnx -f frr-ospf-lan.xml -x loadrd
 sudo vnx -f frr-ospf-lan.xml -x loadre
 ```
 -----------------------------------------------------------------------------------------------------------
-Scenario with security (OSPF trailer):
+Escenario con seguridad (OSPF trailer):
 
-Command to load all configurations in the corresponding routers:
+Comando para cargar todas las configuraciones en los routers correspondientes:
 
 ```bash
 sudo vnx -f frr-ospf-lan.xml -x load_keys
 ```
-Or it can be executed one by one:
+O bien se puede ejecutar uno por uno:
 ```bash
 sudo vnx -f frr-ospf-lan.xml -x loadra_key
 sudo vnx -f frr-ospf-lan.xml -x loadrb_key
@@ -53,16 +54,16 @@ sudo vnx -f frr-ospf-lan.xml -x loadre_key
 ```
 
 -----------------------------------------------------------------------------------------------------------
-BY DEFAULT LOADS THE SCENARIO WITHOUT AUTHENTICATION IN OSPF.
+POR DEFECTO CARGA EL ESCENARIO SIN AUTENTICACION EN OSPF.
 
-FRR does not allow the use of IPSEC in OSPF, it is not possible to configure the command directly in the console.
+FRR no permite el uso de IPSEC en OSPF, directamente no es posible configurar el comando en la consola.
 
 
 -----------------------------------------------------------------------------------------------------------
 
-## IP Addresses:
+## Direcciones IPs:
 Hosts:
-| Host      | Interface    | IPv4           | IPv6                                  |
+| Host      | Interfaz     | IPv4           | IPv6                                  |
 |-----------|--------------|----------------|----------------------------------------|
 | rA        | netA         | 10.7.1.1/24    | fd80:e42c:3ce3:a66a::1/64              |
 | rA        | netA-B       | 10.8.1.1/24    | fd80:e42c:3ce3:a770::1/64              |
@@ -84,60 +85,60 @@ Hosts:
 | hE        | -            | 10.7.5.10/24   | fd80:e42c:3ce3:a66e::10/64             |
 
 
-## OSPF trailer key changes 
+## Cambios de claves del OSPF trailer 
 
-The change.key script allows to automate the change of keys in the OSPF process.
+El script change.key permite automatizar el cambio de claves en el proceso de OSPF.
 
-Its main objective is to modify the key_id of the current keychain to add a maximum usage time and create a new key within the same key_chain to replace the old one.
+Su objetivo principar el modificar la key_id del keychain actual para añadirle un tiempo maximo de uso y crear una nueva key dentro de la misma key_chain para sustituir a la anterior.
 
 
-The key change logic is as follows
+La lógica del cambio de claves es la siguiente
 
-### Current Key (`key_id`)
+### Key en uso (`key_id`)
 
-| Type             | From        | To          |
+| Tipo             | Desde       | Hasta       |
 |------------------|-------------|-------------|
 | accept lifetime  | date-time   | date-time   |
 | send lifetime    | date-time   | date-time   |
 
-### New Key (`key_id + 1`)
+### Key nueva (`key_id + 1`)
 
-| Type             | From        | To        |
+| Tipo             | Desde       | Hasta     |
 |------------------|-------------|-----------|
 | accept lifetime  | date        | infinite  |
 | send lifetime    | date        | infinite  |
 
 
-## Python script to automate key changes 
+## Script de python para automatizar el cambio de claves 
 
-The above logic is implemented in a python script in the /change_key directory
-Use the following command to execute it:
+La lógica anterior se implementa en un script de python en el directorio /change_key
+Utilice el siguiente comando para ejecutarlo:
 
 ```bash
-sudo python3 change_key.py --key [Name of the Key-chain, Key_id in use, New_Password] --routername [name of the routers] --time {seconds}
+sudo python3 change_key.py --key [Nombre del Key-chain, Key_id en uso, Clave_nueva] --routername [nombres de los routers] --time {segundos}
 ```
-### Key tag:
+### Argumento key:
 
-Defines the name of the key_chain in use, the key_id being used and the new key to be used together with the hmac-sha-256 algorithm for the OSPF trailer..
+Define el nombre de la key_chain en uso, el key_id que se está utilizando y la nueva clave que será utilizada junto con el algoritmo hmac-sha-256 para el trailer de OSPF.
 
-### Routername tag
+### Argumento routername
 
-Defines the set of routers that will be affected by this change.
+Define el conjunto de routers que se verán afectados por este cambio
 
 -all (Modifica todos los routers del escenario ["rA","rB","rC","rD","rE"])
 
-### Time tag:
+### Argumento time:
 
-Defines the number of seconds to be used as interval, the minimum time is 60 seconds, if you enter a time less than 60 seconds, 60 seconds will be used.
+Define el numero de segundos que se utilizará de intervalo, el tiempo minimo es 60 segundos, si introducimos un tiempo menor a 60 segundo se utilizará 60 segundos
 
-### Examples:
+### Ejemplos:
 
 ```bash
 sudo python3 change_key.py --key 1 1 EVANGELION --routername all --time 10
 sudo python3 change_key.py --key 1 4 EVANGELION3 --routername rA rB --time 100
 ```
 
-Commands to check that the keys have been changed:
+Comandos para comprobar que se ha cambiado las keys:
 
 ```bash
 show ip ospf interface {interface_name}
