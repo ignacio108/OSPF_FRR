@@ -124,7 +124,7 @@ Defines the name of the key_chain in use, the key_id being used and the new key 
 
 Defines the set of routers that will be affected by this change.
 
--all (Modifica todos los routers del escenario ["rA","rB","rC","rD","rE"])
+-all (Changes all the routers of the scenario ["rA","rB","rC","rD","rE"])
 
 ### Time tag:
 
