@@ -1,6 +1,9 @@
 # ospf-frr-security
 Virtual Lab using VNX( Virtual Networks over linuX)  to test the security of OSPFv2 and OSPFv3
 
+El objetivo principal de este laboratorio virtual será implementar la RFC6518. 
+Para evitar que los routers OSPF establezcan vecindad con routers maliciosos.
+
 ## Topology general:
 ![Topology](img/OSPF_Topology.png)
 
