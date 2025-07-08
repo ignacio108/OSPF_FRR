@@ -1,6 +1,10 @@
 # ospf-frr-security
 Virtual Lab using VNX( Virtual Networks over linuX)  to test the security of OSPFv2 and OSPFv3
 
+## Topology overview:
+![Topology](img/OSPF_Topology.png)
+
+## Topology in detail:
 ![Topology](img/Topologia.png)
 
 
